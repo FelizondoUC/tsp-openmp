@@ -6,8 +6,9 @@
     Cada ciudad tiene coordenadas x e y.
 */
 typedef struct {
-    double x;
-    double y;
+    int id_ciudad;
+    float coord_x;
+    float coord_y;
 } Ciudad;
 
 /*
