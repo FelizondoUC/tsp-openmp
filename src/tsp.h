@@ -24,6 +24,7 @@ typedef struct {
 typedef struct {
     int *ruta;
     double distancia;
+    float fitness;
 } Individuo;
 
 /*

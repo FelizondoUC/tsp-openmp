@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     // Reservamos memoria para 100 ciudades inicialmente
     Ciudad *ciudades = malloc(capacidad * sizeof(Ciudad));
 
-    while (fscanf(archivo, "%d %f %f", &id_ciudad, &coord_x, &coord_y) == 3) {
+    while (fscanf(archivo, "%d %f %f", &id_ciudad, &coord_x, &coord_y) == 3){
         if (num_ciudades >= capacidad) {
         capacidad *= 2;
         ciudades = realloc(ciudades, capacidad * sizeof(Ciudad));
@@ -64,10 +64,34 @@ int main(int argc, char *argv[]) {
             ciudades[i].coord_y);
 }
     
+int tam_poblacion = 20;
+
+Individuo *poblacion = malloc(tam_poblacion * sizeof(Individuo));
+
+for (int i = 0; i < tam_poblacion; i++) {
+    // Para cada individuo, reservamos memoria para su ruta de ciudades
+    poblacion[i].ruta = malloc(num_ciudades * sizeof(int));
+    
+    // Le asignamos una combinación aleatoria única
+    generar_ruta_aleatoria(poblacion[i].ruta, num_ciudades);
+    
+    // Inicializamos su fitness en 0 (lo calcularás después sumando las distancias)
+    poblacion[i].fitness = 0.0; 
+}
 
 
 
-
+for (int i = 0; i < tam_poblacion; i++) {
+    printf("Ruta numero %d: ", i);
+    
+    for (int j = 0; j < num_ciudades; j++) {
+        // Agregamos un espacio "%d " para separar los números de las ciudades
+        printf("%d ", poblacion[i].ruta[j]); 
+    }
+    
+    // Al terminar de imprimir TODAS las ciudades de esta ruta, saltamos de línea
+    printf("\n"); 
+}
 
 
 
