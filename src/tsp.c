@@ -21,3 +21,21 @@ void generar_ruta_aleatoria(int *ruta, int num_ciudades) {
         ruta[j] = temporal;
     }
 }
+
+double calcular_distancia(Ciudad a, Ciudad b) {
+    double dx = (double)(a.coord_x - b.coord_x);
+    double dy = (double)(a.coord_y - b.coord_y);
+    return sqrt(dx * dx + dy * dy);
+}
+
+double distancia_total(Ciudad *ciudades, int *ruta, int num_ciudades) {
+    double total = 0.0;
+    for (int i = 0; i < num_ciudades - 1; i++) {
+        total += calcular_distancia(ciudades[ruta[i]], ciudades[ruta[i+1]]);
+    }
+    // Volver a la ciudad de origen para cerrar el ciclo
+    if (num_ciudades > 0) {
+        total += calcular_distancia(ciudades[ruta[num_ciudades - 1]], ciudades[ruta[0]]);
+    }
+    return total;
+}

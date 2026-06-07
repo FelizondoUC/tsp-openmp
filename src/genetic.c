@@ -1,3 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "tsp.h"
+#include "genetic.h"
+
 /*
     Intercambia dos ciudades
     aleatoriamente.

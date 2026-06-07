@@ -64,39 +64,39 @@ int main(int argc, char *argv[]) {
             ciudades[i].coord_y);
 }
     
-int tam_poblacion = 20;
+    // Utilizamos TAM_POBLACION definido en genetic.h
+    Individuo *poblacion = malloc(TAM_POBLACION * sizeof(Individuo));
 
-Individuo *poblacion = malloc(tam_poblacion * sizeof(Individuo));
-
-for (int i = 0; i < tam_poblacion; i++) {
-    // Para cada individuo, reservamos memoria para su ruta de ciudades
-    poblacion[i].ruta = malloc(num_ciudades * sizeof(int));
-    
-    // Le asignamos una combinación aleatoria única
-    generar_ruta_aleatoria(poblacion[i].ruta, num_ciudades);
-    
-    // Inicializamos su fitness en 0 (lo calcularás después sumando las distancias)
-    poblacion[i].fitness = 0.0; 
-}
-
-
-
-for (int i = 0; i < tam_poblacion; i++) {
-    printf("Ruta numero %d: ", i);
-    
-    for (int j = 0; j < num_ciudades; j++) {
-        // Agregamos un espacio "%d " para separar los números de las ciudades
-        printf("%d ", poblacion[i].ruta[j]); 
+    for (int i = 0; i < TAM_POBLACION; i++) {
+        // Para cada individuo, reservamos memoria para su ruta de ciudades
+        poblacion[i].ruta = malloc(num_ciudades * sizeof(int));
+        
+        // Le asignamos una combinación aleatoria única
+        generar_ruta_aleatoria(poblacion[i].ruta, num_ciudades);
+        
+        // Evaluamos su distancia total y su fitness
+        poblacion[i].distancia = distancia_total(ciudades, poblacion[i].ruta, num_ciudades);
+        poblacion[i].fitness = 100000.0 / poblacion[i].distancia; // Inversamente proporcional a la distancia
     }
-    
-    // Al terminar de imprimir TODAS las ciudades de esta ruta, saltamos de línea
-    printf("\n"); 
-}
 
+    printf("\n=== Evaluación de la Población Inicial ===\n");
+    for (int i = 0; i < TAM_POBLACION; i++) {
+        printf("Individuo %2d - Distancia: %8.2f - Fitness: %.6f\n", 
+               i, poblacion[i].distancia, poblacion[i].fitness);
+        printf("Ruta: ");
+        for (int j = 0; j < num_ciudades; j++) {
+            printf("%d ", poblacion[i].ruta[j]); 
+        }
+        printf("\n\n"); 
+    }
 
+    // Aquí irá el ciclo principal del Algoritmo Genético (Generaciones)
+    // ...
 
-
-
-free(ciudades); 
+    for (int i = 0; i < TAM_POBLACION; i++) {
+        free(poblacion[i].ruta);
+    }
+    free(poblacion);
+    free(ciudades); 
     return 0;
 }

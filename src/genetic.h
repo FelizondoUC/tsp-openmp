@@ -1,3 +1,11 @@
+#ifndef GENETIC_H
+#define GENETIC_H
+
+#include "tsp.h"
+
+#define TAM_POBLACION 20
+#define TAXA_MUTACION 0.1
+
 /*
     Realiza mutación
     intercambiando ciudades.
@@ -34,3 +42,5 @@ void nueva_generacion(
     Ciudad *ciudades,
     int num_ciudades
 );
+
+#endif
