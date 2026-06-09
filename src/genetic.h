@@ -5,6 +5,7 @@
 
 #define TAM_POBLACION 20
 #define TAXA_MUTACION 0.1
+#define TAM_TORNEO 5
 
 /*
     Realiza mutación
@@ -27,20 +28,23 @@ void crossover(
 );
 
 /*
-    Selecciona un individuo aleatorio.
-*/
-Individuo seleccionar_padre(
-    Individuo *poblacion
-);
-
-/*
     Genera una nueva población.
 */
 void nueva_generacion(
     Individuo *poblacion,
     Individuo *nueva_poblacion,
     Ciudad *ciudades,
-    int num_ciudades
+    int num_ciudades,
+    int tam_torneo
+);
+
+/*
+    Sustituye la población anterior
+    por la nueva población generada.
+*/
+void sustituir_poblacion(
+    Individuo *poblacion,
+    Individuo *nueva_poblacion
 );
 
 #endif

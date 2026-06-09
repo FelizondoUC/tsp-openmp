@@ -95,19 +95,6 @@ void crossover(
 }
 
 /*
-    Selección aleatoria simple.
-*/
-Individuo seleccionar_padre(
-    Individuo *poblacion
-) {
-
-    int idx =
-        rand() % TAM_POBLACION;
-
-    return poblacion[idx];
-}
-
-/*
     Genera una nueva población
     usando crossover y mutación.
 */
@@ -115,10 +102,36 @@ void nueva_generacion(
     Individuo *poblacion,
     Individuo *nueva_poblacion,
     Ciudad *ciudades,
-    int num_ciudades
+    int num_ciudades,
+    int tam_torneo
 ) {
 
-    for (int i = 0; i < TAM_POBLACION; i++) {
+    int mejor_indice = 0;
+    for (int i = 1; i < TAM_POBLACION; i++) {
+        if (poblacion[i].distancia < poblacion[mejor_indice].distancia) {
+            mejor_indice = i;
+        }
+    }
+
+    /*
+        Elitismo: conservar el mejor individuo
+        de la generación anterior.
+    */
+    nueva_poblacion[0].ruta =
+        malloc(num_ciudades * sizeof(int));
+
+    for (int i = 0; i < num_ciudades; i++) {
+        nueva_poblacion[0].ruta[i] =
+            poblacion[mejor_indice].ruta[i];
+    }
+
+    nueva_poblacion[0].distancia =
+        poblacion[mejor_indice].distancia;
+
+    nueva_poblacion[0].fitness =
+        poblacion[mejor_indice].fitness;
+
+    for (int i = 1; i < TAM_POBLACION; i++) {
 
         /*
             Reservar memoria
@@ -131,10 +144,18 @@ void nueva_generacion(
             Seleccionar padres.
         */
         Individuo padre1 =
-            seleccionar_padre(poblacion);
+            torneo(
+                poblacion,
+                tam_torneo,
+                TAM_POBLACION
+            );
 
         Individuo padre2 =
-            seleccionar_padre(poblacion);
+            torneo(
+                poblacion,
+                tam_torneo,
+                TAM_POBLACION
+            );
 
         /*
             Crear hijo.
@@ -163,5 +184,20 @@ void nueva_generacion(
                 nueva_poblacion[i].ruta,
                 num_ciudades
             );
+
+        nueva_poblacion[i].fitness =
+            100000.0 / nueva_poblacion[i].distancia;
+    }
+}
+
+void sustituir_poblacion(
+    Individuo *poblacion,
+    Individuo *nueva_poblacion
+) {
+
+    for (int i = 0; i < TAM_POBLACION; i++) {
+        free(poblacion[i].ruta);
+        poblacion[i] = nueva_poblacion[i];
+        nueva_poblacion[i].ruta = NULL;
     }
 }

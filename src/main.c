@@ -5,11 +5,14 @@
 #include "tsp.h"
 #include "genetic.h"
 
+#define FRECUENCIA_IMPRESION 1000
+#define MEJORA_MINIMA_IMPRESION 0.01
 
 int main(int argc, char *argv[]) {
 
     int id_ciudad;
     float coord_x, coord_y;
+    srand(time(NULL));
 
     if (argc < 2) {
         printf("Uso: %s <nombre_del_archivo>\n", argv[0]);
@@ -55,6 +58,7 @@ int main(int argc, char *argv[]) {
     
         num_ciudades++;
     }
+    fclose(archivo);
 
     for (int i = 0; i < num_ciudades; i++) {
     printf("Posición arreglo [%d] -> ID: %d, X: %.2f, Y: %.2f\n", 
@@ -90,12 +94,53 @@ int main(int argc, char *argv[]) {
         printf("\n\n"); 
     }
 
-    // Aquí irá el ciclo principal del Algoritmo Genético (Generaciones)
-    // ...
+    Individuo *nueva_poblacion = malloc(TAM_POBLACION * sizeof(Individuo));
+    int generacion = 0;
+    double mejor_distancia = poblacion[0].distancia;
+
+    while(1){
+        nueva_generacion(
+            poblacion,
+            nueva_poblacion,
+            ciudades,
+            num_ciudades,
+            TAM_TORNEO
+        );
+
+        sustituir_poblacion(poblacion, nueva_poblacion);
+
+        int mejor_indice = 0;
+        for (int i = 1; i < TAM_POBLACION; i++) {
+            if (poblacion[i].distancia < poblacion[mejor_indice].distancia) {
+                mejor_indice = i;
+            }
+        }
+
+        int hubo_mejora =
+            poblacion[mejor_indice].distancia <
+            mejor_distancia - MEJORA_MINIMA_IMPRESION;
+
+        if (hubo_mejora) {
+            mejor_distancia = poblacion[mejor_indice].distancia;
+        }
+
+        if (generacion == 0 ||
+            hubo_mejora ||
+            generacion % FRECUENCIA_IMPRESION == 0) {
+
+            printf("Generación %d - Mejor distancia: %.2f - Fitness: %.6f\n",
+                   generacion,
+                   poblacion[mejor_indice].distancia,
+                   poblacion[mejor_indice].fitness);
+        }
+
+        generacion++;
+    }
 
     for (int i = 0; i < TAM_POBLACION; i++) {
         free(poblacion[i].ruta);
     }
+    free(nueva_poblacion);
     free(poblacion);
     free(ciudades); 
     return 0;

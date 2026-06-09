@@ -39,3 +39,17 @@ double distancia_total(Ciudad *ciudades, int *ruta, int num_ciudades) {
     }
     return total;
 }
+
+Individuo torneo(Individuo *poblacion, int k, int tam_poblacion){
+    int mejor_indice = rand() % tam_poblacion;
+
+    for(int i = 1; i < k; i++){
+        int indice = rand() % tam_poblacion;
+
+        if(poblacion[indice].distancia < poblacion[mejor_indice].distancia){
+            mejor_indice = indice;
+        }
+    }
+
+    return poblacion[mejor_indice];
+}

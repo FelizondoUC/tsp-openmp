@@ -73,4 +73,16 @@ void generar_ruta_aleatoria(
     int num_ciudades
 );
 
+/*
+    Selecciona un individuo usando torneo.
+
+    Se sortean k individuos de la población
+    y gana el que tenga menor distancia total.
+*/
+Individuo torneo(
+    Individuo *poblacion,
+    int k,
+    int tam_poblacion
+);
+
 #endif
