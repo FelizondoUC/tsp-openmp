@@ -28,7 +28,47 @@ void crossover(
 );
 
 /*
+    Genera una nueva población secuencial.
+*/
+void nueva_generacion_secuencial(
+    Individuo *poblacion,
+    Individuo *nueva_poblacion,
+    Ciudad *ciudades,
+    int num_ciudades,
+    int tam_torneo
+);
+
+/*
+    Genera una nueva población paralela
+    con modelo maestro-esclavo.
+*/
+void nueva_generacion_maestro_esclavo(
+    Individuo *poblacion,
+    Individuo *nueva_poblacion,
+    Ciudad *ciudades,
+    int num_ciudades,
+    int tam_torneo
+);
+
+/*
+    Genera una nueva población paralela
+    con modelo de islas.
+*/
+void nueva_generacion_islas(
+    Individuo *poblacion,
+    Individuo *nueva_poblacion,
+    Ciudad *ciudades,
+    int num_ciudades,
+    int tam_torneo,
+    int cantidad_islas,
+    int generacion,
+    int intervalo_migracion
+);
+
+/*
     Genera una nueva población.
+    Por defecto usa la versión paralela
+    maestro-esclavo si se compila con OpenMP.
 */
 void nueva_generacion(
     Individuo *poblacion,

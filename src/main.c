@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "tsp.h"
 #include "genetic.h"
@@ -15,12 +19,58 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
 
     if (argc < 2) {
-        printf("Uso: %s <nombre_del_archivo>\n", argv[0]);
+        printf("Uso: %s <nombre_del_archivo> [maestro|islas] [hilos] [intervalo_migracion]\n", argv[0]);
         return 1; // Salir con error
     }
 
     char *nombre_archivo = argv[1];
+    char *modo_ejecucion = "maestro";
+    int num_hilos = 1;
+    int intervalo_migracion = 100;
+
+#ifdef _OPENMP
+    num_hilos = omp_get_max_threads();
+#endif
+
+    if (argc >= 3) {
+        modo_ejecucion = argv[2];
+    }
+
+    if (argc >= 4) {
+        num_hilos = atoi(argv[3]);
+
+        if (num_hilos < 1) {
+            num_hilos = 1;
+        }
+    }
+
+    if (argc >= 5) {
+        intervalo_migracion = atoi(argv[4]);
+
+        if (intervalo_migracion < 1) {
+            intervalo_migracion = 1;
+        }
+    }
+
+    if (
+        strcmp(modo_ejecucion, "maestro") != 0 &&
+        strcmp(modo_ejecucion, "islas") != 0
+    ) {
+        printf("Error: modo inválido. Use 'maestro' o 'islas'.\n");
+        return 1;
+    }
+
+#ifdef _OPENMP
+    omp_set_num_threads(num_hilos);
+#endif
+
     printf("Abriendo el archivo: %s\n", nombre_archivo);
+    printf("Modo de ejecución: %s\n", modo_ejecucion);
+    printf("Hilos solicitados: %d\n", num_hilos);
+
+    if (strcmp(modo_ejecucion, "islas") == 0) {
+        printf("Intervalo de migración: %d generaciones\n", intervalo_migracion);
+    }
 
     FILE *archivo;
     archivo = fopen(nombre_archivo, "r");
@@ -99,13 +149,26 @@ int main(int argc, char *argv[]) {
     double mejor_distancia = poblacion[0].distancia;
 
     while(1){
-        nueva_generacion(
-            poblacion,
-            nueva_poblacion,
-            ciudades,
-            num_ciudades,
-            TAM_TORNEO
-        );
+        if (strcmp(modo_ejecucion, "islas") == 0) {
+            nueva_generacion_islas(
+                poblacion,
+                nueva_poblacion,
+                ciudades,
+                num_ciudades,
+                TAM_TORNEO,
+                num_hilos,
+                generacion,
+                intervalo_migracion
+            );
+        } else {
+            nueva_generacion_maestro_esclavo(
+                poblacion,
+                nueva_poblacion,
+                ciudades,
+                num_ciudades,
+                TAM_TORNEO
+            );
+        }
 
         sustituir_poblacion(poblacion, nueva_poblacion);
 
@@ -116,17 +179,13 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        int hubo_mejora =
-            poblacion[mejor_indice].distancia <
-            mejor_distancia - MEJORA_MINIMA_IMPRESION;
+        int hubo_mejora = poblacion[mejor_indice].distancia < mejor_distancia - MEJORA_MINIMA_IMPRESION;
 
         if (hubo_mejora) {
             mejor_distancia = poblacion[mejor_indice].distancia;
         }
 
-        if (generacion == 0 ||
-            hubo_mejora ||
-            generacion % FRECUENCIA_IMPRESION == 0) {
+        if (generacion == 0 || hubo_mejora || generacion % FRECUENCIA_IMPRESION == 0) {
 
             printf("Generación %d - Mejor distancia: %.2f - Fitness: %.6f\n",
                    generacion,
