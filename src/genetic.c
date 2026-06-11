@@ -351,13 +351,11 @@ void crossover(
 
     for (int i = 0; i < num_ciudades; i++) {
 
-        int cidade =
-            padre2->ruta[i];
+        int cidade = padre2->ruta[i];
 
         if (!usado[cidade]) {
 
-            hijo->ruta[pos++] =
-                cidade;
+            hijo->ruta[pos++] = cidade;
 
             usado[cidade] = 1;
         }
@@ -542,7 +540,7 @@ void nueva_generacion_islas(
         generacion > 0 &&
         generacion % intervalo_migracion == 0
     ) {
-        int mejor_global = buscar_mejor_indice(nueva_poblacion);
+        int mejor_global = buscar_mejor_indice(nueva_poblacion); //mirar bien complejidad
 
         for (int id_isla = 0; id_isla < cantidad_islas; id_isla++) {
             int inicio;

@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     }
     fclose(archivo);
 
-    for (int i = 0; i < num_ciudades; i++) {
+    for (int i = 0; i < num_ciudades; i++) { //no lo contamos en complejidad
     printf("Posición arreglo [%d] -> ID: %d, X: %.2f, Y: %.2f\n", 
             i, 
             ciudades[i].id_ciudad, 
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
         poblacion[i].fitness = 100000.0 / poblacion[i].distancia; // Inversamente proporcional a la distancia
     }
 
-    printf("\n=== Evaluación de la Población Inicial ===\n");
+    printf("\n=== Evaluación de la Población Inicial ===\n"); //no lo contamos en complejidad
     for (int i = 0; i < TAM_POBLACION; i++) {
         printf("Individuo %2d - Distancia: %8.2f - Fitness: %.6f\n", 
                i, poblacion[i].distancia, poblacion[i].fitness);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
     int generacion = 0;
     double mejor_distancia = poblacion[0].distancia;
 
-    while(1){
+    while(generacion <= 1000000){ //1 millon de iteraciones
         if (strcmp(modo_ejecucion, "islas") == 0) {
             nueva_generacion_islas(
                 poblacion,
@@ -195,6 +195,21 @@ int main(int argc, char *argv[]) {
 
         generacion++;
     }
+
+    int mejor_indice = 0;
+    for (int i = 1; i < TAM_POBLACION; i++) {
+        if (poblacion[i].distancia < poblacion[mejor_indice].distancia) {
+            mejor_indice = i;
+        }
+    }
+
+    printf("\n==================================================\n");
+    printf("¡Simulación terminada con éxito!\n");
+    printf("La mejor ruta encontrada es: ");
+    for (int j = 0; j < num_ciudades; j++) {
+        printf("%d ", poblacion[mejor_indice].ruta[j]);
+    }
+    printf("\n");
 
     for (int i = 0; i < TAM_POBLACION; i++) {
         free(poblacion[i].ruta);
